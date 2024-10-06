@@ -20,7 +20,7 @@
         case 201:
           content.innerHTML = `<b>Created</b>`;
           break;
-        case 204: 
+        case 204:
           content.innerHTML = '<b>Updated (No Content)</b>';
           return;
         case 400:
@@ -34,17 +34,22 @@
           break;
       }
 
+
+
       //If we should parse a response
       if (parseResponse) {
-        
         let obj = await response.json();
 
-        
-        let jsonString = JSON.stringify(obj);
-        content.innerHTML += `<p>${jsonString}</p>`;
+        if (obj.message) {
+          content.innerHTML += `<p>${obj.message}</p>`;
+        }
+        else {
+          let jsonString = JSON.stringify(obj);
+          content.innerHTML += `<p>${jsonString}</p>`;
+        }
+
       } else {
-        //If no response to parse, recieved metadata
-        content.innerHTML += '<p>Meta Data Received</p>';
+        //empty because head request
       }
     };
 
@@ -53,7 +58,7 @@
       //Grab all the info from the form
       const url = nameForm.getAttribute('action');
       const method = nameForm.getAttribute('method');
-      
+
       const nameField = nameForm.querySelector('#nameField');
       const ageField = nameForm.querySelector('#ageField');
 
@@ -70,22 +75,21 @@
         body: formData,
       });
 
-      //Once we have a response, handle it.
       handleResponse(response, true);
     };
 
     //function to send request
     const requestUpdate = async (userForm) => {
-      
+
       //Grab the url and method from the html form below
       const url = userForm.querySelector('#urlField').value;
       const method = userForm.querySelector('#methodSelect').value;
-      
+
       //Await our fetch response. Go to the URL, use the right method, and attach the headers.
       let response = await fetch(url, {
         method,
         headers: {
-            'Accept': 'application/json'
+          'Accept': 'application/json'
         },
       });
 
